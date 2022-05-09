@@ -11,6 +11,7 @@ export default async ({
     tagName,
     tagMsg,
     branch,
+    trailer,
 }) => {
     try {
         if (!process.env.GITHUB_TOKEN) {
@@ -40,7 +41,12 @@ export default async ({
         await exec('git', ['add', '-A'], options)
 
         try {
-            await exec('git', ['commit', '-v', '-m', `${MESSAGE}`], options)
+            if (trailer != '') {
+                await exec('git', ['commit', '-v', '--trailer', `${trailer}`, '-m', `${MESSAGE}`], options)
+            }
+            else {
+                await exec('git', ['commit', '-v', '-m', `${MESSAGE}`], options)
+            }
         } catch (err) {
             core.debug('nothing to commit')
             return
