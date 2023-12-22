@@ -84,10 +84,11 @@ async function run() {
         branch,
         skipCiMessageLocation,
     })
-    await createTag({
-        tagName,
-        tagMsg,
-    })
+    // temporarily disabled, this throws 404 error
+    // await createTag({
+    //     tagName,
+    //     tagMsg,
+    // })
     console.log('setting output version=' + newVersion + ' prefix=' + prefix)
     await createAnnotations({ githubToken, newVersion: tagMsg, linesReplaced })
     core.setOutput('version', newVersion)
