@@ -71,7 +71,7 @@ async function run() {
     const tagMsg = trailer != '' ? `${capitalize(prefix) + ' '}Version ${newVersion}` 
         : `${capitalize(prefix) + ' '}Version ${newVersion} [skip ci]`
 
-    await commit({
+    const bumpSha = await commit({
         USER_EMAIL: 'bump-version@version.com',
         USER_NAME: 'bump_version',
         GITHUB_TOKEN: githubToken,
@@ -84,6 +84,7 @@ async function run() {
     await createTag({
         tagName,
         tagMsg,
+        object: bumpSha,
     })
     console.log('setting output version=' + newVersion + ' prefix=' + prefix)
     await createAnnotations({ githubToken, newVersion: tagMsg, linesReplaced })

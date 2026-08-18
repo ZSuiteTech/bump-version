@@ -55,11 +55,28 @@ export default async ({
         await exec('git', ['checkout', branch], options)
         await exec('git', ['merge', 'bump_tmp_'], options)
         await push({ branch, options })
+        return await revParse('HEAD', options)
     } catch (err: any) {
         core.setFailed(err.message)
         console.log(err)
         process.exit(1)
     }
+}
+
+// The pushed commit, so callers can tag what was actually published rather than
+// GITHUB_SHA, which is the commit that triggered the workflow.
+async function revParse(rev, options) {
+    let out = ''
+    await exec('git', ['rev-parse', rev], {
+        ...options,
+        listeners: {
+            ...options.listeners,
+            stdout: (data: Buffer) => {
+                out += data.toString()
+            },
+        },
+    })
+    return out.trim()
 }
 
 async function push({ branch, options }) {
